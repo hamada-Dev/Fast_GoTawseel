@@ -154,7 +154,7 @@
                                 @endif
                             </td>
                             <td>
-                                <a class="deco-none" href="tel:{{$dm['phone']}}">{{count($dm['orders'])}}</a>
+                                <a class="deco-none" href="{{ route('admin.order.list', ['status'=>'all', 'delivery' => $dm->id]) }}">{{count($dm['orders'])}}</a>
                             </td>
                             <td>
                                 <div>

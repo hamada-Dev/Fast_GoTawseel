@@ -35,6 +35,7 @@ class OrderController extends Controller
         }
 
         $module_id = $request->query('module_id', null);
+        $delivery_id = $request->query('delivery', null);
 
         if (session()->has('order_filter')) {
             $request = json_decode(session('order_filter'));
@@ -45,6 +46,9 @@ class OrderController extends Controller
         $orders = Order::with(['customer', 'store'])
             ->when(isset($module_id), function ($query) use ($module_id) {
                 return $query->module($module_id);
+            })
+            ->when($delivery_id, function ($query) use ($delivery_id) {
+                return $query->where('delivery_man_id', $delivery_id);
             })
             ->when(isset($request->zone), function ($query) use ($request) {
                 return $query->whereHas('store', function ($q) use ($request) {
@@ -118,7 +122,7 @@ class OrderController extends Controller
         $to_date = isset($request->to_date) ? $request->to_date : null;
         $order_type = isset($request->order_type) ? $request->order_type : null;
         $total = $orders->total();
-
+            // dd($orders);
         return view('admin-views.order.list', compact('orders', 'status', 'orderstatus', 'scheduled', 'vendor_ids', 'zone_ids', 'from_date', 'to_date', 'total', 'order_type'));
     }
 
@@ -559,7 +563,7 @@ class OrderController extends Controller
     public function filter_reset(Request $request)
     {
         session()->forget('order_filter');
-        return back();
+        return redirect()->route('admin.order.list', ['status' => 'all']);
     }
 
     public function add_to_cart(Request $request)
