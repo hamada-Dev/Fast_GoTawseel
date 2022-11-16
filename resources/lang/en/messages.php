@@ -1223,6 +1223,8 @@
   'send_mail' => 'Send mail',
   'Active' => 'Active',
   'Inactive' => 'Inactive',
+  'company_percentage'  => 'Company Percentage',
+  'company_fee'  => 'Company Fee',
   'Are you sure?' => 'Are you sure ',
   'Yes' => 'Yes',
   'email_configured_perfectly!' => 'Email configured perfectly!',

@@ -60,11 +60,16 @@
                             </tr>
                         </thead>
                         <tbody>
-                        @php($digital_transaction = \App\Models\OrderTransaction::where('delivery_man_id', $dm->id)
+                        @php
+                        $digital_transaction = \App\Models\OrderTransaction::where('delivery_man_id', $dm->id)
                         ->when($date, function($query)use($date){
                             return $query->whereDate('created_at', $date);
-                        })->paginate(25))
+                        })->paginate(25);
+                        $totalEarning = 0;
+                       @endphp
+
                         @foreach($digital_transaction as $k=>$dt)
+                        <?php $totalEarning += $dt->original_delivery_charge; ?>
                             <tr>
                                 <td scope="row">{{$k+$digital_transaction->firstItem()}}</td>
                                 <td><a href="{{route((isset($dt->order) && $dt->order->order_type=='parcel')?'admin.parcel.order.details':'admin.order.details',$dt->order_id)}}">{{$dt->order_id}}</a></td>
@@ -76,6 +81,29 @@
                     </table>
                 </div>
             </div>
+
+            <div style="margin-top: 100px" class="card-body p-0">
+                <table class="table table-borderless table-thead-bordered table-nowrap justify-content-between table-align-middle card-table">
+                    <thead class="thead-light">
+                        <tr>
+                            <th class="border-0">{{translate('messages.total_earning')}}</th>
+                            <th class="border-0">{{translate('messages.company_percentage')}} </th>
+                            <th class="border-0">{{translate('messages.delivery_fee')}} {{translate('messages.earned')}}</th>
+                            <th class="border-0">{{translate('messages.company_fee')}}  {{translate('messages.earned')}}</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+
+                        <tr>
+                            <td>{{$totalEarning}}</td>
+                            <td>{{ "30%" }}</td>
+                            <td>{{$totalEarning  - ($totalEarning * .3)}}</td>
+                            <td>{{$totalEarning  - ($totalEarning * .7)}}</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
             <!-- End Body -->
             <div class="card-footer">
                 {!!$digital_transaction->links()!!}
