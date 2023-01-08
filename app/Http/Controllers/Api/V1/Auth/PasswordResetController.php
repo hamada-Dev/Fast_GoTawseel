@@ -9,6 +9,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 use App\CentralLogics\SMS_module;
+use Illuminate\Support\Facades\Mail;
 
 class PasswordResetController extends Controller
 {
@@ -35,8 +36,8 @@ class PasswordResetController extends Controller
                 'token' => $token,
                 'created_at' => now(),
             ]);
-            // Mail::to($customer['email'])->send(new \App\Mail\PasswordResetMail($token));
-            // return response()->json(['message' => 'Email sent successfully.'], 200);
+            Mail::to($customer['email'])->send(new \App\Mail\PasswordResetMail($token));
+            return response()->json(['message' => 'Email sent successfully.'], 200);
             $response = SMS_module::send($request['phone'],$token);
             if($response == 'success')
             {
